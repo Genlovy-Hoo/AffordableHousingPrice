@@ -105,16 +105,23 @@ $$
 
 ## 安装
 
-无需额外依赖，仅需 Python 3.6+ 环境。
+本项目使用 [uv](https://docs.astral.sh/uv/) 进行 Python 环境管理。
 
 ```bash
+# 安装 uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 克隆项目
 git clone <repository-url>
 cd AffordableHousingPrice
+
+# 安装依赖
+uv sync
 ```
 
 ## 使用方法
 
-### 基本用法
+### 方式一：Python 模块
 
 ```python
 from ahp import calc_ahp
@@ -170,10 +177,45 @@ price = calc_ahp(
 )
 ```
 
-## 运行示例
+### API 服务
 
 ```bash
-python ahp.py
+# 启动服务
+uv run python api.py
+
+# 或使用 uvicorn
+uv run uvicorn api:app --reload --host 0.0.0.0 --port 8000
+```
+
+启动后访问：
+- API 文档：http://localhost:8000/docs
+- 交互式文档：http://localhost:8000/redoc
+
+#### API 调用示例
+
+**请求**
+
+```bash
+curl -X POST "http://localhost:8000/api/calc_ahp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "monthly_disposable_income": 10000,
+    "house_area_per_person": 35,
+    "house_expense_ratio": 0.3,
+    "debt_year": 30,
+    "debt_rate": 0.035,
+    "down_payment_ratio": 0.3
+  }'
+```
+
+**响应**
+
+```json
+{
+  "price_per_sqm": 27268.77,
+  "total_price": 954407.0,
+  "monthly_payment": 3000.0
+}
 ```
 
 ## 许可证
