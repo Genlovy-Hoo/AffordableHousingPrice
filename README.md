@@ -127,9 +127,11 @@ uv sync
 from ahp import calc_ahp
 
 # 使用默认参数计算
-price = calc_ahp(monthly_disposable_income=10000)
-print(f"合理房价: {price:.2f} 元/平米")
-# 输出: 合理房价: 27268.77 元/平米
+price, ratio = calc_ahp(monthly_disposable_income=10000)
+print(f"合理房价: {price:.5f} 元/平米")
+print(f"房价收入比: {ratio:.5f}")
+# 输出: 合理房价: 27268.77367 元/平米
+# 输出: 房价收入比: 2.72688
 ```
 
 ### 参数说明
@@ -158,19 +160,19 @@ print(f"合理房价: {price:.2f} 元/平米")
 
 ```python
 # 示例1：按首付比例计算
-price = calc_ahp(
+price, ratio = calc_ahp(
     monthly_disposable_income=15000,
     down_payment_ratio=0.3
 )
 
 # 示例2：按首付金额计算
-price = calc_ahp(
+price, ratio = calc_ahp(
     monthly_disposable_income=15000,
     down_payment_value=500000
 )
 
 # 示例3：按存款年限计算（3年攒首付）
-price = calc_ahp(
+price, ratio = calc_ahp(
     monthly_disposable_income=15000,
     year_for_down_payment=3,
     house_expense_ratio_to_down_payment=0.5
@@ -212,9 +214,10 @@ curl -X POST "http://localhost:8000/api/calc_ahp" \
 
 ```json
 {
-  "price_per_sqm": 27268.77,
-  "total_price": 954407.0,
-  "monthly_payment": 3000.0
+  "price_per_sqm": 27268.77367,
+  "total_price": 954407.07842,
+  "monthly_payment": 3000.00000,
+  "price_to_income_ratio": 2.72688
 }
 ```
 

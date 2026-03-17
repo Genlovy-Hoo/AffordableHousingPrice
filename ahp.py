@@ -5,12 +5,12 @@
 """
 
 import math
-from typing import Union
+from typing import Tuple, Union
 
 
 def calc_ahp(
     monthly_disposable_income: Union[float, int],
-    house_area_per_person: Union[int, float] = 35,
+    house_area_per_person: Union[int, float] = 35.1106,
     house_expense_ratio: float = 0.3,
     debt_year: Union[int, float] = 30,
     debt_rate: float = 3.5/100,
@@ -18,7 +18,7 @@ def calc_ahp(
     year_for_down_payment: Union[int, float] = None,
     house_expense_ratio_to_down_payment: float = 0.5,
     down_payment_value: Union[float, int] = None,
-) -> float:
+) -> Tuple[float, float]:
     """根据人均可支配收入计算合理的房价。
 
     根据人均可支配月收入、人均住房面积、住房支出占收入比、还款年限、贷款年利率等参数，
@@ -26,7 +26,7 @@ def calc_ahp(
 
     Args:
         monthly_disposable_income: 人均月可支配收入（元）。
-        house_area_per_person: 人均住房面积（平米），默认为35。
+        house_area_per_person: 人均住房面积（平米），默认为35.1106。
         house_expense_ratio: 住房支出占收入比例，默认为0.3。
         debt_year: 还款年限（年），默认为30。
         debt_rate: 贷款年利率，默认为3.5%。
@@ -39,14 +39,16 @@ def calc_ahp(
             与down_payment_ratio和year_for_down_payment三选一。
 
     Returns:
-        合理的房价（元/平米）。
+        元组，包含两个值：
+        - 合理的房价（元/平米）
+        - 房价收入比（房价/月收入）
 
     Raises:
         ValueError: 当首付计算方式参数设置不正确时抛出。
 
     Example:
         >>> calc_ahp(10000)
-        27268.773669129267
+        (27182.875781659226, 2.7182875781659226)
     """
     # 每月预期房贷花费额
     monthly_pay = monthly_disposable_income * house_expense_ratio
@@ -80,13 +82,15 @@ def calc_ahp(
             * house_expense_ratio_to_down_payment
         )
 
-    return total / house_area_per_person
+    price_per_sqm = total / house_area_per_person
+    price_to_income_ratio = price_per_sqm / monthly_disposable_income
+    return price_per_sqm, price_to_income_ratio
 
 
 if __name__ == "__main__":
     res = calc_ahp(
         monthly_disposable_income=15000,
-        house_area_per_person=35,
+        house_area_per_person=35.1106,
         house_expense_ratio=0.3,
         debt_year=30,
         debt_rate=5 / 100,
@@ -95,6 +99,6 @@ if __name__ == "__main__":
         year_for_down_payment=3,
         house_expense_ratio_to_down_payment=0.5,
     )
-    print(res)
+    print(f"房价: {res[0]:.5f} 元/平米, 房价收入比: {res[1]:.5f}")
     res = calc_ahp(10000)
-    print(res)
+    print(f"房价: {res[0]:.5f} 元/平米, 房价收入比: {res[1]:.5f}")

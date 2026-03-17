@@ -52,6 +52,7 @@ class AHPResponse(BaseModel):
     price_per_sqm: float = Field(..., description="合理房价（元/平米）")
     total_price: float = Field(..., description="房屋总价（元）")
     monthly_payment: float = Field(..., description="每月还款额（元）")
+    price_to_income_ratio: float = Field(..., description="房价收入比（房价/月收入）")
 
 
 @app.get("/")
@@ -80,7 +81,7 @@ async def calculate_ahp(request: AHPRequest):
         HTTPException: 当参数设置不正确时抛出。
     """
     try:
-        price_per_sqm = calc_ahp(
+        price_per_sqm, price_to_income_ratio = calc_ahp(
             monthly_disposable_income=request.monthly_disposable_income,
             house_area_per_person=request.house_area_per_person,
             house_expense_ratio=request.house_expense_ratio,
@@ -98,9 +99,10 @@ async def calculate_ahp(request: AHPRequest):
         )
 
         return AHPResponse(
-            price_per_sqm=round(price_per_sqm, 2),
-            total_price=round(total_price, 2),
-            monthly_payment=round(monthly_payment, 2),
+            price_per_sqm=round(price_per_sqm, 5),
+            total_price=round(total_price, 5),
+            monthly_payment=round(monthly_payment, 5),
+            price_to_income_ratio=round(price_to_income_ratio, 5),
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

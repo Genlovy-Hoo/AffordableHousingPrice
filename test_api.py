@@ -43,8 +43,10 @@ class TestCalcAHP:
         assert "price_per_sqm" in data
         assert "total_price" in data
         assert "monthly_payment" in data
-        assert abs(data["price_per_sqm"] - 27268.77) < 1
+        assert "price_to_income_ratio" in data
+        assert abs(data["price_per_sqm"] - 27268.77367) < 0.00001
         assert data["monthly_payment"] == 3000.0
+        assert abs(data["price_to_income_ratio"] - 2.72688) < 0.00001
 
     def test_calc_ahp_custom_params(self, client):
         """测试使用自定义参数计算房价。"""
@@ -64,6 +66,8 @@ class TestCalcAHP:
         assert data["price_per_sqm"] > 0
         assert data["total_price"] > 0
         assert data["monthly_payment"] == 15000 * 0.35
+        assert "price_to_income_ratio" in data
+        assert data["price_to_income_ratio"] > 0
 
     def test_calc_ahp_down_payment_value(self, client):
         """测试使用首付金额计算房价。"""
