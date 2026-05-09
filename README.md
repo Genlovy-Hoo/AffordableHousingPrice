@@ -2,6 +2,9 @@
 
 # 合理房价(Affordable Housing Price, AHP)计算器 
 
+小程序来啦，扫码使用
+![小程序嘛](./MiniApp.png)
+
 根据人均可支配收入计算合理房价的 Python 模块。
 
 ## 功能介绍
