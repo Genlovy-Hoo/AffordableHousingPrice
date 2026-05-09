@@ -5,11 +5,11 @@
 小程序来啦，扫码使用
 ![小程序嘛](./MiniApp.png)
 
-根据人均可支配收入计算合理房价的 Python 模块。
+根据人均可支配收入计算合理房价的 Python 模块；实现位于 `ahp_pcdi.py`（PCDI：Per Capita Disposable Income人均可支配收入）。
 
 ## 功能介绍
 
-本模块提供一个核心函数 `calc_ahp`，用于根据人均月可支配收入及相关参数计算合理的房价（元/平米）。
+本模块提供一个核心函数 `calc_ahp_pcdi`，用于根据人均月可支配收入及相关参数计算合理的房价（元/平米）及房价收入比。
 
 计算逻辑基于以下因素：
 - 每月住房支出占收入比例
@@ -127,10 +127,10 @@ uv sync
 ### 方式一：Python 模块
 
 ```python
-from ahp import calc_ahp
+from ahp_pcdi import calc_ahp_pcdi
 
 # 使用默认参数计算
-price, ratio = calc_ahp(monthly_disposable_income=10000)
+price, ratio = calc_ahp_pcdi(monthly_disposable_income=10000)
 print(f"合理房价: {price:.5f} 元/平米")
 print(f"房价收入比: {ratio:.5f}")
 # 输出: 合理房价: 27268.77367 元/平米
@@ -151,6 +151,8 @@ print(f"房价收入比: {ratio:.5f}")
 | `year_for_down_payment` | int/float | None | 攒首付需要的合理年数（三选一） |
 | `house_expense_ratio_to_down_payment` | float | 0.5 | 攒首付时住房支出占收入比 |
 
+**返回值**：`(合理房价元/平米, 房价收入比)`，其中房价收入比为「元/平米房价 ÷ 月可支配收入」。
+
 ### 首付计算方式
 
 首付计算支持三种方式（只能三选一）：
@@ -163,65 +165,23 @@ print(f"房价收入比: {ratio:.5f}")
 
 ```python
 # 示例1：按首付比例计算
-price, ratio = calc_ahp(
+price, ratio = calc_ahp_pcdi(
     monthly_disposable_income=15000,
     down_payment_ratio=0.3
 )
 
 # 示例2：按首付金额计算
-price, ratio = calc_ahp(
+price, ratio = calc_ahp_pcdi(
     monthly_disposable_income=15000,
     down_payment_value=500000
 )
 
 # 示例3：按存款年限计算（3年攒首付）
-price, ratio = calc_ahp(
+price, ratio = calc_ahp_pcdi(
     monthly_disposable_income=15000,
     year_for_down_payment=3,
     house_expense_ratio_to_down_payment=0.5
 )
-```
-
-### API 服务
-
-```bash
-# 启动服务
-uv run python api.py
-
-# 或使用 uvicorn
-uv run uvicorn api:app --reload --host 0.0.0.0 --port 8000
-```
-
-启动后访问：
-- API 文档：http://localhost:8000/docs
-- 交互式文档：http://localhost:8000/redoc
-
-#### API 调用示例
-
-**请求**
-
-```bash
-curl -X POST "http://localhost:8000/api/calc_ahp" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "monthly_disposable_income": 10000,
-    "house_area_per_person": 35,
-    "house_expense_ratio": 0.3,
-    "debt_year": 30,
-    "debt_rate": 0.035,
-    "down_payment_ratio": 0.3
-  }'
-```
-
-**响应**
-
-```json
-{
-  "price_per_sqm": 27268.77367,
-  "total_price": 954407.07842,
-  "monthly_payment": 3000.00000,
-  "price_to_income_ratio": 2.72688
-}
 ```
 
 ## 许可证
